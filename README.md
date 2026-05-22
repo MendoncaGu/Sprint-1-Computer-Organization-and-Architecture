@@ -12,20 +12,20 @@ Renan de Castro Albuquerque - rm 570532
 Vinícius Souza Ferraz - rm 570622
 
 
-#Problema
+# Problema
 Ineficiência computacional em sistemas de eletropostos.
 
-#Justificativa
+# Justificativa
 Softwares de alto nível aumentam consumo de energia e processamento.
 
-#Proposta de solução
+# Proposta de solução
 Desenvolvimento de um sistema otimizado em Assembly.
 
-#Arquitetura utilizada
+# Arquitetura utilizada
 Assembly x86 com acesso direto ao hardware e registradores da CPU.
 
-#Impactos esperados
+# Impactos esperados
 Redução de consumo energético e maior eficiência computacional.
 
-#Relação com sustentabilidade e energias renováveis
+# Relação com sustentabilidade e energias renováveis
 Menor desperdício energético em sistemas de mobilidade elétrica sustentável.
