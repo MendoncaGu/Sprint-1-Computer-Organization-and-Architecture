@@ -1,6 +1,6 @@
 # Sprint-1-Computer-Organization-and-Architecture
 
-#Integrantes
+# Integrantes
 Ângelo Malta Reina - rm 570769
 
 Gustavo Mendonça Duarte - rm 570561
