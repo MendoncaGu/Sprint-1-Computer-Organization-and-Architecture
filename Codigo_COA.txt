@@ -1,0 +1,115 @@
+section .data
+    msg_inicial   db "Energia inicial: ", 0
+    len_inicial   equ $ - msg_inicial - 1
+    msg_atual     db "Quantidade energia atual: ", 0
+    len_atual     equ $ - msg_atual - 1
+    msg_perdida   db "Quantidade energia perdida: ", 0
+    len_perdida   equ $ - msg_perdida - 1
+    nova_linha    db 10
+    len_nova      equ 1
+section .bss
+    ; Reserva 12 bytes
+    numero_texto  resb 12
+section .text
+    global _start
+imprimir_string:
+    mov eax, 4
+    mov ebx, 1
+    int 0x80
+    ret
+imprimir_nova_linha:
+    mov eax, 4
+    mov ebx, 1
+    mov ecx, nova_linha
+    mov edx, len_nova
+    int 0x80
+    ret
+int_para_texto:
+    mov edi, numero_texto
+    add edi, 11
+    mov byte [edi], 0
+    ;se o número for 0, escreve 0
+    cmp eax, 0
+    jne .dividir            ; se não for zero, vai dividir
+    dec edi
+    mov byte [edi], '0'     ; escreve 0
+    jmp .terminar
+.dividir:
+    mov ecx, 10             ; divisor = 10
+.loop_digitos:
+    cmp eax, 0              ; verifica se acabou dígitos
+    je .terminar            ; sim: termina
+    mov edx, 0
+    div ecx                 ; divide EAX por 10
+    add dl, '0'             ; converte ASCII
+    dec edi                 ; move um byte para trás
+    mov [edi], dl           ; escreve o dígito
+    jmp .loop_digitos       ; repete para o próximo dígito
+.terminar:
+ 
+    mov ecx, edi
+    mov eax, numero_texto
+    add eax, 11             ; endereço do final
+    sub eax, edi            ; subtrai o início
+    mov edx, eax            ; EDX = tamanho
+    ret
+_start:
+    mov dword [qtdEnergia], 3000
+ 
+    mov dword [qtdEnergiaInicial], 3000
+    mov dword [energiaGasta], 150
+    mov dword [i], 1
+loop_verificar:
+    mov eax, [qtdEnergia]   ; carrega qtdEnergia em EAX
+    cmp eax, 0              ; compara com 0
+    jle loop_fim            ; se EAX <= 0, acaba
+    mov eax, [qtdEnergia]
+    mov ebx, [energiaGasta]
+    sub eax, ebx            ; eax = qtdEnergia - energiaGasta
+    mov [qtdEnergia], eax   ; salva de volta
+    ; Imprime "Energia inicial: "
+    mov ecx, msg_inicial
+    mov edx, len_inicial
+    call imprimir_string
+ 
+    mov eax, [qtdEnergiaInicial]
+    call int_para_texto     ; ECX = endereço do texto, EDX = tamanho
+    call imprimir_string
+    call imprimir_nova_linha
+    ; Imprime "Quantidade energia atual: "
+    mov ecx, msg_atual
+    mov edx, len_atual
+    call imprimir_string
+    ; Converte qtdEnergia para texto e imprime
+    mov eax, [qtdEnergia]
+    call int_para_texto
+    call imprimir_string
+    call imprimir_nova_linha
+    ; Imprime "Quantidade energia perdida: "
+    mov ecx, msg_perdida
+    mov edx, len_perdida
+    call imprimir_string
+    ; Calcula energiaGasta * i
+    mov eax, [energiaGasta] ; EAX = energiaGasta (150)
+    mov ebx, [i]            ; EBX = i
+    mul ebx                 ; EAX = EAX * EBX  (energiaGasta * i)
+    call int_para_texto     ; converte o resultado para texto
+    call imprimir_string
+    call imprimir_nova_linha
+    call imprimir_nova_linha ; linha em branco entre iterações
+    mov eax, [i]
+    add eax, 1
+    mov [i], eax
+    jmp loop_verificar      ; volta para verificar a condição do loop
+loop_fim:
+    ; Encerra programa
+    mov eax, 1              ; syscall número 1 = exit
+    mov ebx, 0              ; código de saída 0 (sem erros)
+    int 0x80
+
+ 
+section .data
+    qtdEnergia dd 0   ; int qtdEnergia
+    qtdEnergiaInicial dd 0  ; int qtdEnergiaInicial
+    energiaGasta dd 0   ; int energiaGasta
+    i dd 0   ; int i
